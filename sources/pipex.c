@@ -6,7 +6,7 @@
 /*   By: mistery576 <mistery576@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 17:08:12 by miafonso          #+#    #+#             */
-/*   Updated: 2024/08/29 22:16:32 by mistery576       ###   ########.fr       */
+/*   Updated: 2024/08/29 23:24:30 by mistery576       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,12 @@ static int pipex()
 		char *env[] = {NULL};
 
 		execve(exe_path, args, env);
-		char *tosend = get_next_line(0);
+		char *tosend = "hello world\n";
 		write(fd[1], tosend, ft_strlen(tosend));
-		printf("Information send\n");
-		exit(0);
+		printf("Information send %s\n", tosend);
+		
 	}
 	wait(NULL);
-	char toreceive[BUFSIZ];
-	read(fd[0], toreceive, BUFSIZ);
-	printf("Received information %s\n", toreceive);
 	return (0);
 }
 
