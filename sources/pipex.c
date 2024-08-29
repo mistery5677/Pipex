@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: miafonso <miafonso@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mistery576 <mistery576@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 17:08:12 by miafonso          #+#    #+#             */
-/*   Updated: 2024/08/29 17:52:10 by miafonso         ###   ########.fr       */
+/*   Updated: 2024/08/29 22:16:32 by mistery576       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,30 +29,41 @@ static int	errors(char *file, char *error_msg)
 	return (0);
 }
 
-static int	init_child()
+static int pipex()
 {
+	int fd[2];
 	int child;
-	
-	child = fork();
-	if(child == -1)
-		return -1;
-	return 0;
+
+	if (pipe(fd) == -1)
+		return (print_error("Error - Pipe not initialized\n"));
+	child = fork();    
+	if (child == -1)
+		return (print_error("Error - Child not initialized\n"));
+	if (child == 0)
+	{
+		char *exe_path = "/bin/ls";
+		char *args[] = {"ls", "-l", NULL};
+		char *env[] = {NULL};
+
+		execve(exe_path, args, env);
+		char *tosend = get_next_line(0);
+		write(fd[1], tosend, ft_strlen(tosend));
+		printf("Information send\n");
+		exit(0);
+	}
+	wait(NULL);
+	char toreceive[BUFSIZ];
+	read(fd[0], toreceive, BUFSIZ);
+	printf("Received information %s\n", toreceive);
+	return (0);
 }
 
 int	main (int argc, char **argv)
 {
-	int fd[2];
-
-	fd[0] = open(argv[1], O_RDONLY);
-	fd[1] = open(argv[4], O_RDONLY);
-	ft_printf("Parent %d %d\n", fd[0], fd[1]);
 	if (errors(argv[1], INFILE_ERROR) == -1
 		|| errors(argv[4], OUTFILE_ERROR) == -1 || argc != 5)
 		return (-1);
- 	if (init_child() == -1)
-		return (print_error("Error - Fail to init pipe\n"));
-	ft_printf("child %d %d %d\n", fd[0], fd[1], dup2(3, 6));
- 	close(fd[0]);
-	close(fd[1]);
+	if (pipex() == -1)
+		return (-1);
 	return (0);
 }

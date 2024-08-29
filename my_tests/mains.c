@@ -149,7 +149,7 @@ int main()
         wait(NULL);
         char toRecieve[BUFSIZ];
         read(fd[0], toRecieve, BUFSIZ);
-		write(3, &toRecieve, ft_strlen(toRecieve));
+	write(3, &toRecieve, ft_strlen(toRecieve));
         printf("\n  Parent: Data from child = %s\n\n", toRecieve);
         exit(0);
     }
@@ -169,7 +169,7 @@ int main() {
     char *env[] = {NULL};  
     
     // Execute the "ls" command
-    if (execve(path	, args, env) == -1) {
+    if (execve(path, args, env) == -1) {
         perror("execve");  // If execve returns, it must have failed
         exit(EXIT_FAILURE);
     }
