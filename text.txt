@@ -1,3 +1,0 @@
-Texto original.
-Texto duplicado usando dup().
-Texto duplicado usando dup2().

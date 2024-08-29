@@ -1,0 +1,8 @@
+a1a1
+a1a1a1aa1
+a1a1a1aa1
+a1
+aaaa
+b
+
+command: < test.txt grep a1 | wc -w > results.txt
