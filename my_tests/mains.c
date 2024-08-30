@@ -176,3 +176,13 @@ int main() {
 
     return 0;  // This line will not be executed if execve is successful
 }*/
+
+//Testing envp
+int main (int argc, char **argv, char **envp)
+{
+	int i = 0;
+	while(envp[i])
+	{
+		printf("argv[%d] %s     envp[%d] %s\n", i, argv[i], i, envp[i]);
+	}
+}
