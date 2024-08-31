@@ -184,5 +184,6 @@ int main (int argc, char **argv, char **envp)
 	while(envp[i])
 	{
 		printf("argv[%d] %s     envp[%d] %s\n", i, argv[i], i, envp[i]);
+		i++;
 	}
 }

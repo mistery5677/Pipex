@@ -28,19 +28,47 @@ static int	errors(char *file, char *error_msg)
 	return (0);
 }
 
-static void *find_path(char *cmd, char *envp)
+static char *get_cmd_path(char **envp)
 {
-	const char *directories[] = {"/bin", "/usr/bin", "/usr/local/bin", NULL};
 	int i;
 
 	i = 0;
-	while(directories[i])
+	while(envp[i] != NULL)
 	{
+		if(ft_strncmp(envp[i], "PATH=", 5) == 0)
+			return envp[i] + 5;
 		i++;
 	}
-	
-	path = 
-	return path;
+	return NULL;
+}
+
+static void *find_path(char *cmd, char **envp)
+{
+	(void)cmd;
+	char *path_envp = get_cmd_path(envp);
+	char *path = ft_strdup(path_envp);
+	printf("find path %s\n", path);
+	char **dir = ft_split(path, ':');
+	//char *dir = strtok(path, ":");
+	int i;
+
+	i = 0;
+	while(dir[i] != NULL)
+	{
+		printf("dir[%d] %s\n", i, dir[i]);
+		i++;
+/* 		char full_path[1024];
+       	snprintf(full_path, sizeof(full_path), "%s/%s", dir, cmd);
+
+        if (access(full_path, X_OK) == 0) {
+            free(path);
+            return strdup(full_path); // Return the full path if found
+        }
+
+        dir = strtok(NULL, ":"); */
+	}
+	free(path);
+	return NULL;
 }
 
 /* static void parent_process(char **argv, char **envp, int *fd)
@@ -60,10 +88,11 @@ static void child_process(char **argv, char **envp, int *fd)
 	char *path;
 	
 	infile = open(argv[1], O_RDONLY, 0777);
+	path = find_path(argv[2], envp);
+	printf("path %s\n", path);
 	dup2(fd[1], STDOUT_FILENO);
 	dup2(infile, STDIN_FILENO);
 	close(fd[0]);
-	path = find_path(argv[2], envp[2]);
 }
 
 static int pipex(char **argv, char **envp)
@@ -78,7 +107,8 @@ static int pipex(char **argv, char **envp)
 		return (print_error("Error - Child not initialized\n"));
 	if (child == 0)
 		child_process(argv, envp, fd);	
-	waitpid(child, NULL, 0);
+	wait(0);
+	printf("acabou o child \n");
 	//parent_process();
 	
 	return (0);
