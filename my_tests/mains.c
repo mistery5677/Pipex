@@ -178,7 +178,7 @@ int main() {
 }*/
 
 //Testing envp
-int main (int argc, char **argv, char **envp)
+/* int main (int argc, char **argv, char **envp)
 {
 	int i = 0;
 	while(envp[i])
@@ -186,4 +186,5 @@ int main (int argc, char **argv, char **envp)
 		printf("argv[%d] %s     envp[%d] %s\n", i, argv[i], i, envp[i]);
 		i++;
 	}
-}
+} */
+
