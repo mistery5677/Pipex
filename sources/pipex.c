@@ -12,21 +12,20 @@
 
 #include "pipex.h"  
 
-static int	print_error(char *error_msg)
+static void	print_error(char *error_msg)
 {
 	ft_putstr_fd (error_msg, 2);
-	return (-1);
 }
 
 /*Verify if file exists and has read permissions*/
-/* static int	errors(char *file, char *error_msg)
+static int	errors(char *file, char *error_msg)
 {
 	if (access(file, R_OK) == -1 || access (file, F_OK) == -1)
 	{
-		return (print_error(error_msg));
+		return (print_error(error_msg), -1);
 	}
 	return (0);
-} */
+}
 
 static char *get_cmd_path(char **envp)
 {
@@ -44,7 +43,6 @@ static char *get_cmd_path(char **envp)
 
 static void *find_path(char *cmd, char **envp)
 {
-	(void)cmd;
 	char *path_envp = get_cmd_path(envp);
 	char *path = ft_strdup(path_envp);
 	char **dir = ft_split(path, ':');
@@ -76,41 +74,48 @@ static void *find_path(char *cmd, char **envp)
 	return NULL;
 }
 
-/* static void parent_process(char **argv, char **envp, int *fd)
+static void parent_process(char **argv, char **envp, int *fd)
 {
 	int outfile;
+	char *cmd_path;
+	char **new_argv;
 
-	outfile = open(argv[4], O_RDONLY, 0777);
+	outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC);
+	cmd_path = find_path(argv[3], envp);
+	new_argv = ft_split(argv[3], ' ');
 	dup2(fd[0], STDIN_FILENO);
 	dup2(outfile, STDOUT_FILENO);
+	close(fd[0]);
 	close(fd[1]);
-	execute_cmd(argv[3], envp);
-} */
+	close(outfile);
+	execve(cmd_path, new_argv, envp);
+}
 
 static void child_process(char **argv, char **envp, int *fd)
 {
-	//int infile;
+	int infile;
 	char *cmd_path;
-	char *new_argv[2];
+	char **new_argv;
 
-	//infile = open(argv[1], O_RDONLY, 0777);
-	cmd_path = find_path(argv[1], envp); 	
-	new_argv[0] = cmd_path;
-	new_argv[1] = NULL;
-
-    // Execute the command
-    execve(cmd_path, new_argv, envp);
-    free(cmd_path);
-    exit(EXIT_FAILURE);
-/* 	dup2(fd[1], STDOUT_FILENO);
-	dup2(infile, STDIN_FILENO); */
+	infile = open(argv[1], O_RDONLY);
+	if (infile == -1)
+		return print_error("Error - Failed to open the file\n");
+	cmd_path = find_path(argv[2], envp);
+	new_argv = ft_split(argv[2], ' ');
+	// Redirect the output for the fd[1]
+ 	dup2(fd[1], STDOUT_FILENO);
+	dup2(infile, STDIN_FILENO);
 	close(fd[0]);
+	close(fd[1]);
+	close(infile);
+	// Execute the command
+    execve(cmd_path, new_argv, envp);
 }
 
-static int pipex(char **argv, char **envp)
+static void pipex(char **argv, char **envp)
 {
 	int fd[2];
-	int child;
+	pid_t child;
 	
 	if (pipe(fd) == -1)
 		return (print_error("Error - Pipe not initialized\n"));
@@ -120,19 +125,14 @@ static int pipex(char **argv, char **envp)
 	if (child == 0)
 		child_process(argv, envp, fd);	
 	wait(0);
-	//parent_process();
-	
-	return (0);
+	parent_process(argv, envp, fd);
 }
 
 int	main (int argc, char **argv, char **envp)
 {
-	(void)argc;
-	(void)argv;
-/* 	if (errors(argv[1], INFILE_ERROR) == -1
+ 	if (errors(argv[1], INFILE_ERROR) == -1
 		|| errors(argv[4], OUTFILE_ERROR) == -1 || argc != 5)
-		return (-1); */
-	if (pipex(argv, envp) == -1)
-		return (-1);
+		return (-1); 
+	pipex(argv, envp);
 	return (0);
 }

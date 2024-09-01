@@ -1,2 +1,7 @@
-8
-    
+Makefile
+infile.txt
+libraries
+my_tests
+outfile
+pipex
+sources
