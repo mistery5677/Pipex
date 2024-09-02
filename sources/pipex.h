@@ -6,7 +6,7 @@
 /*   By: miafonso <miafonso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 17:08:31 by miafonso          #+#    #+#             */
-/*   Updated: 2024/08/30 16:48:38 by miafonso         ###   ########.fr       */
+/*   Updated: 2024/09/02 16:38:32 by miafonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,5 +16,10 @@
 # include <sys/wait.h>
 # define INFILE_ERROR "Error - Infile invalid permissions"
 # define OUTFILE_ERROR "Error - Outfile invalid permissions"
+
+char	*find_path_util(char *full_path, char **split_cmd, char **dir);
+char	*get_cmd_path(char **envp);
+void	print_error(char *error_msg);
+void	free_double(char **str);
 
 #endif
