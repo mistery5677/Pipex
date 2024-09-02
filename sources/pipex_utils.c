@@ -62,5 +62,7 @@ char	*find_path_util(char *full_path, char **split_cmd, char **dir)
 		free(full_path);
 		i++;
 	}
+	free_double(dir);
+	free_double(split_cmd);
 	return (NULL);
 }

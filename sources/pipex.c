@@ -24,11 +24,7 @@ static char	*find_path(char *cmd, char **envp)
 	split_cmd = ft_split(cmd, ' ');
 	full_path = NULL;
 	full_path = find_path_util(full_path, split_cmd, dir);
-	if (full_path)
-		return (full_path);
-	free_double(dir);
-	free_double(split_cmd);
-	return (NULL);
+	return (full_path);
 }
 
 static void	parent_process(char **argv, char **envp, int *fd)
@@ -40,6 +36,13 @@ static void	parent_process(char **argv, char **envp, int *fd)
 	outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC);
 	cmd_path = find_path(argv[3], envp);
 	new_argv = ft_split(argv[3], ' ');
+	if (!cmd_path || !new_argv || outfile == -1)
+	{
+		close(outfile);
+		free(cmd_path);
+		free_double(new_argv);
+		return ;
+	}
 	dup2(fd[0], STDIN_FILENO);
 	dup2(outfile, STDOUT_FILENO);
 	close(outfile);
@@ -57,13 +60,15 @@ static int	child_process(char **argv, char **envp, int *fd)
 	int		infile;
 
 	infile = open(argv[1], O_RDONLY);
-	if (infile == -1)
+	cmd_path = find_path(argv[2], envp);
+	new_argv = ft_split(argv[2], ' ');
+	if (infile == -1 || !cmd_path || !new_argv)
 	{
+		free(cmd_path);
+		free_double(new_argv);
 		print_error("Error - Failed to open the file\n");
 		return (-1);
 	}
-	cmd_path = find_path(argv[2], envp);
-	new_argv = ft_split(argv[2], ' ');
 	dup2(fd[1], STDOUT_FILENO);
 	dup2(infile, STDIN_FILENO);
 	close(infile);
@@ -99,7 +104,10 @@ static void	pipex(char **argv, char **envp)
 int	main(int argc, char **argv, char **envp)
 {
 	if (argc != 5)
+	{
+		print_error("Error - Invalid number of args\n");
 		return (-1);
+	}
 	if (ft_strlen(argv[2]) == 0 || ft_strlen(argv[3]) == 0)
 	{
 		print_error("Error - Empty command\n");
