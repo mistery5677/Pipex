@@ -60,12 +60,11 @@ static int	child_process(char **argv, char **envp, int *fd)
 	int		infile;
 
 	infile = open(argv[1], O_RDONLY, 0777);
-	if (infile == -1)
-		return (ft_printf("-bash: %s: No such file or directory\n", argv[1]));
 	cmd_path = find_path(argv[2], envp);
 	new_argv = ft_split(argv[2], ' ');
 	if (infile == -1 || !cmd_path || !new_argv)
 	{
+		close(infile);
 		free(cmd_path);
 		free_double(new_argv);
 		return (-1);
@@ -99,6 +98,7 @@ static void	pipex(char **argv, char **envp)
 		parent_process(argv, envp, fd);
 		return ;
 	}
+	print_error("Error - Failed to initialize the child\n");
 }
 
 int	main(int argc, char **argv, char **envp)
