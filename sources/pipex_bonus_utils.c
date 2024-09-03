@@ -76,13 +76,11 @@ int check_commands(char **argv, char **envp, int argc)
 	while(argv[i] && argc - 1 > i)
 	{
 		cmd_path = find_path(argv[i], envp);
-		if(cmd_path == NULL || access(cmd_path, X_OK) == -1)
+		if(access(cmd_path, X_OK) == -1)
 		{
-			free(cmd_path);
 			ft_printf("%s: command not found\n", argv[i]);
 			return (-1);
 		}
-		free(cmd_path);
 		i++;
 	}
 	return (0);

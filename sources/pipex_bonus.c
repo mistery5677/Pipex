@@ -12,7 +12,7 @@
 
 #include "pipex.h"  
 
-char	*find_path(char *cmd, char **envp)
+static char	*find_path(char *cmd, char **envp)
 {
 	char	**dir;
 	char	**split_cmd;
@@ -33,10 +33,10 @@ static void	parent_process(char **argv, char **envp, int *fd)
 	char	*cmd_path;
 	int		outfile;
 
-	outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC , 0777);
+	outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC);
 	cmd_path = find_path(argv[3], envp);
 	new_argv = ft_split(argv[3], ' ');
-	if (!cmd_path || !new_argv)
+	if (!cmd_path || !new_argv || outfile == -1)
 	{
 		close(outfile);
 		free(cmd_path);
@@ -59,23 +59,22 @@ static int	child_process(char **argv, char **envp, int *fd)
 	char	*cmd_path;
 	int		infile;
 
-	infile = open(argv[1], O_RDONLY, 0777);
-	if (infile == -1)
-		return (ft_printf("-bash: %s: No such file or directory\n", argv[1]));
+	infile = open(argv[1], O_RDONLY);
 	cmd_path = find_path(argv[2], envp);
 	new_argv = ft_split(argv[2], ' ');
 	if (infile == -1 || !cmd_path || !new_argv)
 	{
 		free(cmd_path);
 		free_double(new_argv);
+		print_error("Error - Failed to open the file\n");
 		return (-1);
 	}
 	dup2(fd[1], STDOUT_FILENO);
 	dup2(infile, STDIN_FILENO);
 	close(infile);
-	execve(cmd_path, new_argv, envp);
 	free_double(new_argv);
 	free(cmd_path);
+	free_all(new_argv, cmd_path);
 	return (0);
 }
 
@@ -99,6 +98,7 @@ static void	pipex(char **argv, char **envp)
 		parent_process(argv, envp, fd);
 		return ;
 	}
+	print_error("Error - Failed ");
 }
 
 int	main(int argc, char **argv, char **envp)

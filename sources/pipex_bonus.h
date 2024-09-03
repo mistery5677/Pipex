@@ -10,14 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define PIPEX_H
+#ifndef PIPEX_BONUS_H
+# define PIPEX_BONUS_H
 # include "../libraries/libft/libft.h"
 # include <sys/wait.h>
 # define INFILE_ERROR "Error - Infile invalid permissions"
 # define OUTFILE_ERROR "Error - Outfile invalid permissions"
 
-char	*find_path(char *cmd, char **envp);
 char	*find_path_util(char *full_path, char **split_cmd, char **dir);
 char	*get_cmd_path(char **envp);
 void	print_error(char *error_msg);

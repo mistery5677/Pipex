@@ -44,8 +44,6 @@ static int	ft_conversion(va_list args, const char format)
 	int	len;
 
 	len = 0;
-	if (args != NULL)
-	{
 		if (format == 'c')
 			len += ft_putchar(va_arg(args, int));
 		else if (format == 'd' || format == 'i')
@@ -62,7 +60,6 @@ static int	ft_conversion(va_list args, const char format)
 			len += ft_printstr(va_arg(args, const char *));
 		else if (format == '%')
 			len += ft_putchar('%');
-	}
 	return (len);
 }
 
