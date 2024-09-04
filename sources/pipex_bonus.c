@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
+/*   pipex_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: miafonso <miafonso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 17:08:12 by miafonso          #+#    #+#             */
-/*   Updated: 2024/09/02 17:49:36 by miafonso         ###   ########.fr       */
+/*   Updated: 2024/09/04 12:26:22 by miafonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,15 +27,15 @@ char	*find_path(char *cmd, char **envp)
 	return (full_path);
 }
 
-static void	parent_process(char **argv, char **envp, int *fd)
+static void	parent_process(char **argv, char **envp, int *fd, int argc)
 {
 	char	**new_argv;
 	char	*cmd_path;
 	int		outfile;
 
-	outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC , 0777);
-	cmd_path = find_path(argv[3], envp);
-	new_argv = ft_split(argv[3], ' ');
+	outfile = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC , 0777);
+	cmd_path = find_path(argv[argc - 2], envp);
+	new_argv = ft_split(argv[argc - 2], ' ');
 	if (!cmd_path || !new_argv)
 	{
 		close(outfile);
@@ -53,37 +53,42 @@ static void	parent_process(char **argv, char **envp, int *fd)
 	free(cmd_path);
 }
 
-static int	child_process(char **argv, char **envp, int *fd)
+static int	child_process(char **argv, char **envp, int *fd, int argc)
 {
 	char	**new_argv;
 	char	*cmd_path;
 	int		infile;
+	int	i;
 
+	i = 1;
 	infile = open(argv[1], O_RDONLY, 0777);
-	cmd_path = find_path(argv[2], envp);
-	new_argv = ft_split(argv[2], ' ');
-	if (infile == -1 || !cmd_path || !new_argv)
-	{
-		close(infile);
-		free(cmd_path);
-		free_double(new_argv);
-		return (-1);
-	}
 	dup2(fd[1], STDOUT_FILENO);
 	dup2(infile, STDIN_FILENO);
+	while(argv[i] && i < argc - 2)
+	{
+		cmd_path = find_path(argv[i], envp);
+		new_argv = ft_split(argv[i], ' ');
+		if (infile == -1 || !cmd_path || !new_argv)
+		{
+			close(infile);
+			free(cmd_path);
+			free_double(new_argv);
+			return (-1);
+		}
+		execve(cmd_path, new_argv, envp);
+		free_double(new_argv);
+		free(cmd_path);
+	}
 	close(infile);
-	execve(cmd_path, new_argv, envp);
-	free_double(new_argv);
-	free(cmd_path);
 	return (0);
 }
 
-static void	pipex(char **argv, char **envp)
+static void	pipex(char **argv, char **envp, int argc)
 {
 	int		fd[2];
 	int		flag;
 	pid_t	child;
-
+	
 	flag = 0;
 	if (pipe(fd) == -1)
 		return (print_error("Error - Pipe not initialized\n"));
@@ -91,25 +96,24 @@ static void	pipex(char **argv, char **envp)
 	if (child == -1)
 		return (print_error("Error - Child not initialized\n"));
 	if (child == 0)
-		flag = child_process(argv, envp, fd);
+	{
+		flag = child_process(argv, envp, fd, argc);
+		exit(0);	
+	}
 	wait(0);
 	if (flag == 0)
 	{
-		parent_process(argv, envp, fd);
+		parent_process(argv, envp, fd, argc);
 		return ;
 	}
-	print_error("Error - Failed to initialize the child\n");
+	else
+		print_error("Error - Failed to initialize the child\n");
 }
 
 int	main(int argc, char **argv, char **envp)
 {
-	if (argc != 5)
-	{
-		print_error("Error - Invalid number of args\n");
-		return (-1);
-	}
 	if (check_commands(argv, envp, argc) == -1)
 		return (-1);
-	pipex(argv, envp);
+	pipex(argv, envp, argc);
 	return (0);
 }

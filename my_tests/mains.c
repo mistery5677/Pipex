@@ -188,3 +188,9 @@ int main() {
 	}
 } */
 
+//Testing the last arg
+/* int main(int argc, char **argv)
+{
+	printf("argc %d argv %s\n", argc, argv[argc - 1]);
+} */
+

@@ -13,6 +13,14 @@ OBJECTS			= 	$(SOURCES:.c=.o)
 
 NAME			=	pipex
 
+BONUS_SOURCES_F = pipex_bonus.c pipex_utils_bonus.c
+
+BONUS_SOURCES = $(addprefix $(SOURCES_DIR)/, $(BONUS_SOURCES_F))
+
+BONUS_OBJ = $(BONUS_SOURCES:.c=.o)
+
+BONUS_NAME = pipex_bonus
+
 CC			=	cc
 RM			=	rm -rf
 
@@ -24,19 +32,24 @@ CFLAGS			=	-Wall -Wextra -Werror
 all:			$(NAME)
 
 $(NAME):		$(LIBFT) $(OBJECTS) $(HEADER)
-				$(CC) $(CFLAGS) $(OBJECTS) $(LIBFT) $(MINILIBX) $(MLXFLAGS) -o $(NAME)
+				$(CC) $(CFLAGS) $(OBJECTS) $(LIBFT) -o $(NAME)
 
 $(LIBFT):
 				$(MAKE) -C $(LIBFT_PATH)
 
 clean:
 				$(MAKE) -C $(LIBFT_PATH) clean
-				$(RM) $(OBJECTS)
+				$(RM) $(OBJECTS) $(BONUS_OBJ)
 
 fclean:			clean
 				$(MAKE) -C $(LIBFT_PATH) fclean
-				$(RM) $(NAME)
+				$(RM) $(NAME) $(BONUS_NAME)
 
 re:				fclean all
+
+bonus:	$(BONUS_NAME)
+
+$(BONUS_NAME): $(LIBFT) $(BONUS_OBJ) $(HEADER)
+				$(CC) $(CFLAGS) $(BONUS_OBJ) $(LIBFT) -o $(BONUS_NAME)
 
 .PHONY:			all clean fclean re libft minilibx bonus
