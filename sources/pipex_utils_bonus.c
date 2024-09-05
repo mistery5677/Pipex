@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex_utils.c                                      :+:      :+:    :+:   */
+/*   pipex_utils_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: miafonso <miafonso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 16:44:34 by miafonso          #+#    #+#             */
-/*   Updated: 2024/09/02 17:49:31 by miafonso         ###   ########.fr       */
+/*   Updated: 2024/09/05 11:56:29 by miafonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ char	*find_path_util(char *full_path, char **split_cmd, char **dir)
 	return (NULL);
 }
 
-int check_commands(char **argv, char **envp, int argc)
+/* int check_commands(char **argv, char **envp, int argc)
 {
 	int i;
 	char *cmd_path;
@@ -86,4 +86,4 @@ int check_commands(char **argv, char **envp, int argc)
 		i++;
 	}
 	return (0);
-}
+} */

@@ -6,11 +6,43 @@
 /*   By: miafonso <miafonso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 17:08:12 by miafonso          #+#    #+#             */
-/*   Updated: 2024/09/04 12:26:22 by miafonso         ###   ########.fr       */
+/*   Updated: 2024/09/05 16:53:35 by miafonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"  
+
+static void execute(char *argv, char **envp)
+{
+	char *cmd_path;
+	char **new_argv;
+
+	cmd_path = find_path(argv, envp);
+	new_argv = ft_split(argv, ' ');
+	execve(cmd_path, new_argv, envp);
+}
+
+static void	child_process(char *argv, char **envp)
+{
+	pid_t	child;
+	int		fd[2];
+
+	if(pipe(fd) == -1)
+		return ;
+	child = fork();
+	if(child == 0)
+	{
+		close(fd[0]);
+		dup2(fd[1], STDOUT_FILENO);
+		execute(argv, envp);
+	}
+	else
+	{
+		close(fd[1]);
+		dup2(fd[0], STDIN_FILENO);
+		waitpid(child, NULL, 0);
+	}
+}
 
 char	*find_path(char *cmd, char **envp)
 {
@@ -27,93 +59,72 @@ char	*find_path(char *cmd, char **envp)
 	return (full_path);
 }
 
-static void	parent_process(char **argv, char **envp, int *fd, int argc)
+static void here_doc(char **argv)
 {
-	char	**new_argv;
-	char	*cmd_path;
-	int		outfile;
-
-	outfile = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC , 0777);
-	cmd_path = find_path(argv[argc - 2], envp);
-	new_argv = ft_split(argv[argc - 2], ' ');
-	if (!cmd_path || !new_argv)
-	{
-		close(outfile);
-		free(cmd_path);
-		free_double(new_argv);
-		return ;
-	}
-	dup2(fd[0], STDIN_FILENO);
-	dup2(outfile, STDOUT_FILENO);
-	close(outfile);
-	close(fd[1]);
-	close(fd[0]);
-	execve(cmd_path, new_argv, envp);
-	free_double(new_argv);
-	free(cmd_path);
-}
-
-static int	child_process(char **argv, char **envp, int *fd, int argc)
-{
-	char	**new_argv;
-	char	*cmd_path;
-	int		infile;
-	int	i;
-
-	i = 1;
-	infile = open(argv[1], O_RDONLY, 0777);
-	dup2(fd[1], STDOUT_FILENO);
-	dup2(infile, STDIN_FILENO);
-	while(argv[i] && i < argc - 2)
-	{
-		cmd_path = find_path(argv[i], envp);
-		new_argv = ft_split(argv[i], ' ');
-		if (infile == -1 || !cmd_path || !new_argv)
-		{
-			close(infile);
-			free(cmd_path);
-			free_double(new_argv);
-			return (-1);
-		}
-		execve(cmd_path, new_argv, envp);
-		free_double(new_argv);
-		free(cmd_path);
-	}
-	close(infile);
-	return (0);
-}
-
-static void	pipex(char **argv, char **envp, int argc)
-{
-	int		fd[2];
-	int		flag;
+	char *line;
 	pid_t	child;
 	
-	flag = 0;
-	if (pipe(fd) == -1)
-		return (print_error("Error - Pipe not initialized\n"));
 	child = fork();
-	if (child == -1)
-		return (print_error("Error - Child not initialized\n"));
 	if (child == 0)
 	{
-		flag = child_process(argv, envp, fd, argc);
-		exit(0);	
+		line = get_next_line(0);
+		while(line)
+		{
+			if (ft_strncmp(line, argv[2], ft_strlen(line) - 1) == 0)
+			{
+				free(line);
+				exit(0);
+			}
+			free(line);
+			line = get_next_line(0);
+		}
 	}
 	wait(0);
-	if (flag == 0)
-	{
-		parent_process(argv, envp, fd, argc);
-		return ;
-	}
-	else
-		print_error("Error - Failed to initialize the child\n");
 }
 
-int	main(int argc, char **argv, char **envp)
+static int open_file(char *file, int flag)
 {
-	if (check_commands(argv, envp, argc) == -1)
-		return (-1);
-	pipex(argv, envp, argc);
-	return (0);
+	int fd;
+
+	fd = 0;
+	if (flag == 1)
+	{
+		fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0777);
+		return fd;
+	}
+	else if (flag == 2)
+	{
+		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+		return fd;
+	}
+	else
+	{
+		fd = open(file, O_RDONLY, 0777);
+		return fd;
+	}
+}
+
+int main(int argc, char **argv, char **envp)
+{
+	int infile;
+	int outfile;
+	int i;
+	
+	i = 2;
+	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
+	{
+		i = 3;
+		outfile = open_file(argv[argc - 1], 1);
+		here_doc(argv);
+	}
+	else
+	{
+		infile = open_file(argv[1], 3);
+		outfile = open_file(argv[argc - 1], 2);
+		dup2(infile, STDIN_FILENO);
+	}
+	while(i < argc - 2)
+		child_process(argv[i++], envp);
+	dup2(outfile, STDOUT_FILENO);
+	execute(argv[argc - 2], envp);
 }

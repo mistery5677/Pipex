@@ -6,7 +6,7 @@
 /*   By: miafonso <miafonso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 17:08:12 by miafonso          #+#    #+#             */
-/*   Updated: 2024/09/02 17:49:36 by miafonso         ###   ########.fr       */
+/*   Updated: 2024/09/05 17:06:44 by miafonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ static int	child_process(char **argv, char **envp, int *fd)
 	return (0);
 }
 
-static void	pipex(char **argv, char **envp)
+static void	pipex(char **argv, char **envp, int argc)
 {
 	int		fd[2];
 	int		flag;
@@ -87,6 +87,8 @@ static void	pipex(char **argv, char **envp)
 	flag = 0;
 	if (pipe(fd) == -1)
 		return (print_error("Error - Pipe not initialized\n"));
+	if (argc != 5 || check_commands(argv, envp, argc) == -1)
+		return ;
 	child = fork();
 	if (child == -1)
 		return (print_error("Error - Child not initialized\n"));
@@ -103,13 +105,6 @@ static void	pipex(char **argv, char **envp)
 
 int	main(int argc, char **argv, char **envp)
 {
-	if (argc != 5)
-	{
-		print_error("Error - Invalid number of args\n");
-		return (-1);
-	}
-	if (check_commands(argv, envp, argc) == -1)
-		return (-1);
-	pipex(argv, envp);
+	pipex(argv, envp, argc);
 	return (0);
 }
