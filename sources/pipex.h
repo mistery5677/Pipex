@@ -22,6 +22,6 @@ char	*find_path_util(char *full_path, char **split_cmd, char **dir);
 char	*get_cmd_path(char **envp);
 void	print_error(char *error_msg);
 void	free_double(char **str);
-int     check_commands(char **argv, char **envp, int argc);
+int     check_commands(char **argv, char **envp);
 
 #endif

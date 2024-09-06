@@ -67,16 +67,16 @@ char	*find_path_util(char *full_path, char **split_cmd, char **dir)
 	return (NULL);
 }
 
-int check_commands(char **argv, char **envp, int argc)
+int check_commands(char **argv, char **envp)
 {
 	int i;
 	char *cmd_path;
 
 	i = 2;
-	while(argv[i] && argc - 1 > i)
+	while(argv[i] && i <= 3)
 	{
 		cmd_path = find_path(argv[i], envp);
-		if(cmd_path == NULL || access(cmd_path, X_OK) == -1)
+		if(cmd_path == NULL )
 		{
 			free(cmd_path);
 			ft_printf("%s: command not found\n", argv[i]);
