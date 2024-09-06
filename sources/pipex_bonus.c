@@ -6,21 +6,11 @@
 /*   By: miafonso <miafonso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 17:08:12 by miafonso          #+#    #+#             */
-/*   Updated: 2024/09/05 16:53:35 by miafonso         ###   ########.fr       */
+/*   Updated: 2024/09/06 16:33:30 by miafonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"  
-
-static void execute(char *argv, char **envp)
-{
-	char *cmd_path;
-	char **new_argv;
-
-	cmd_path = find_path(argv, envp);
-	new_argv = ft_split(argv, ' ');
-	execve(cmd_path, new_argv, envp);
-}
+#include "pipex_bonus.h"  
 
 static void	child_process(char *argv, char **envp)
 {
@@ -42,21 +32,6 @@ static void	child_process(char *argv, char **envp)
 		dup2(fd[0], STDIN_FILENO);
 		waitpid(child, NULL, 0);
 	}
-}
-
-char	*find_path(char *cmd, char **envp)
-{
-	char	**dir;
-	char	**split_cmd;
-	char	*full_path;
-	char	*path_envp;
-
-	path_envp = get_cmd_path(envp);
-	dir = ft_split(path_envp, ':');
-	split_cmd = ft_split(cmd, ' ');
-	full_path = NULL;
-	full_path = find_path_util(full_path, split_cmd, dir);
-	return (full_path);
 }
 
 static void here_doc(char **argv)
@@ -89,17 +64,17 @@ static int open_file(char *file, int flag)
 	fd = 0;
 	if (flag == 1)
 	{
-		fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0777);
+		fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 		return fd;
 	}
 	else if (flag == 2)
 	{
-		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		return fd;
 	}
 	else
 	{
-		fd = open(file, O_RDONLY, 0777);
+		fd = open(file, O_RDONLY);
 		return fd;
 	}
 }

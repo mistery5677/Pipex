@@ -15,6 +15,8 @@ NAME			=	pipex
 
 BONUS_SOURCES_F = pipex_bonus.c pipex_utils_bonus.c
 
+BONUS_HEADER	=	$(SOURCES_DIR)/pipex_bonus.h
+
 BONUS_SOURCES = $(addprefix $(SOURCES_DIR)/, $(BONUS_SOURCES_F))
 
 BONUS_OBJ = $(BONUS_SOURCES:.c=.o)
@@ -49,7 +51,7 @@ re:				fclean all
 
 bonus:	$(BONUS_NAME)
 
-$(BONUS_NAME): $(LIBFT) $(BONUS_OBJ) $(HEADER)
+$(BONUS_NAME): $(LIBFT) $(BONUS_OBJ) $(BONUS_HEADER)
 				$(CC) $(CFLAGS) $(BONUS_OBJ) $(LIBFT) -o $(BONUS_NAME)
 
 .PHONY:			all clean fclean re libft minilibx bonus

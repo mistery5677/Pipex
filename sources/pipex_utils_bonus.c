@@ -6,11 +6,11 @@
 /*   By: miafonso <miafonso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 16:44:34 by miafonso          #+#    #+#             */
-/*   Updated: 2024/09/05 11:56:29 by miafonso         ###   ########.fr       */
+/*   Updated: 2024/09/06 16:26:06 by miafonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 void	free_double(char **str)
 {
@@ -23,11 +23,6 @@ void	free_double(char **str)
 		i++;
 	}
 	free(str);
-}
-
-void	print_error(char *error_msg)
-{
-	ft_putstr_fd(error_msg, 2);
 }
 
 char	*get_cmd_path(char **envp)
@@ -44,7 +39,7 @@ char	*get_cmd_path(char **envp)
 	return (NULL);
 }
 
-char	*find_path_util(char *full_path, char **split_cmd, char **dir)
+static char	*find_path_util(char *full_path, char **split_cmd, char **dir)
 {
 	int	i;
 
@@ -67,23 +62,36 @@ char	*find_path_util(char *full_path, char **split_cmd, char **dir)
 	return (NULL);
 }
 
-/* int check_commands(char **argv, char **envp, int argc)
+char	*find_path(char *cmd, char **envp)
 {
-	int i;
-	char *cmd_path;
+	char	**dir;
+	char	**split_cmd;
+	char	*full_path;
+	char	*path_envp;
 
-	i = 2;
-	while(argv[i] && argc - 1 > i)
+	path_envp = get_cmd_path(envp);
+	if (path_envp == NULL)
+		exit(0);
+	dir = ft_split(path_envp, ':');
+	split_cmd = ft_split(cmd, ' ');
+	full_path = NULL;
+	full_path = find_path_util(full_path, split_cmd, dir);
+	return (full_path);
+}
+
+void	execute(char *argv, char **envp)
+{
+	char	*cmd_path;
+	char	**new_argv;
+
+	cmd_path = find_path(argv, envp);
+ 	if (cmd_path == NULL)
 	{
-		cmd_path = find_path(argv[i], envp);
-		if(cmd_path == NULL || access(cmd_path, X_OK) == -1)
-		{
-			free(cmd_path);
-			ft_printf("%s: command not found\n", argv[i]);
-			return (-1);
-		}
 		free(cmd_path);
-		i++;
+		return ;
 	}
-	return (0);
-} */
+	new_argv = ft_split(argv, ' ');
+	execve(cmd_path, new_argv, envp);
+	free_double(new_argv);
+	free(cmd_path);
+}
