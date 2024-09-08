@@ -10,17 +10,17 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex_bonus.h"  
+#include "pipex_bonus.h"
 
-static void	child_process(char *argv, char **envp)
+static void child_process(char *argv, char **envp)
 {
-	pid_t	child;
-	int		fd[2];
+	pid_t child;
+	int fd[2];
 
-	if(pipe(fd) == -1)
-		return ;
+	if (pipe(fd) == -1)
+		return;
 	child = fork();
-	if(child == 0)
+	if (child == 0)
 	{
 		close(fd[0]);
 		dup2(fd[1], STDOUT_FILENO);
@@ -36,25 +36,35 @@ static void	child_process(char *argv, char **envp)
 
 static void here_doc(char **argv)
 {
+	int fd[2];
 	char *line;
-	pid_t	child;
-	
+	pid_t child;
+
+	if (pipe(fd) == -1)
+		return;
 	child = fork();
 	if (child == 0)
 	{
-		line = get_next_line(0);
-		while(line)
+		line = get_next_line(STDIN_FILENO);
+		while (line)
 		{
 			if (ft_strncmp(line, argv[2], ft_strlen(line) - 1) == 0)
 			{
 				free(line);
 				exit(0);
 			}
+			ft_putstr_fd(line, fd[1]);
 			free(line);
 			line = get_next_line(0);
 		}
+		exit(0);
 	}
-	wait(0);
+	else
+	{
+		dup2(fd[0], STDIN_FILENO);
+		close(fd[1]);
+		wait(0);
+	}
 }
 
 static int open_file(char *file, int flag)
@@ -74,7 +84,7 @@ static int open_file(char *file, int flag)
 	}
 	else
 	{
-		fd = open(file, O_RDONLY);
+		fd = open(file, O_RDONLY, 0777);
 		return fd;
 	}
 }
@@ -84,12 +94,15 @@ int main(int argc, char **argv, char **envp)
 	int infile;
 	int outfile;
 	int i;
-	
+
 	i = 2;
-	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
+	if (argc < 5)
+		return 0;
+	if (ft_strncmp(argv[1], "here_doc", 9) == 0)
 	{
 		i = 3;
 		outfile = open_file(argv[argc - 1], 1);
+		dup2(outfile, STDOUT_FILENO);
 		here_doc(argv);
 	}
 	else
@@ -97,9 +110,9 @@ int main(int argc, char **argv, char **envp)
 		infile = open_file(argv[1], 3);
 		outfile = open_file(argv[argc - 1], 2);
 		dup2(infile, STDIN_FILENO);
+		dup2(outfile, STDOUT_FILENO);
 	}
-	while(i < argc - 2)
+	while (i < argc - 2)
 		child_process(argv[i++], envp);
-	dup2(outfile, STDOUT_FILENO);
 	execute(argv[argc - 2], envp);
 }

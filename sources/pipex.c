@@ -10,14 +10,16 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"  
+#include "pipex.h"
 
-static int	child_process(char **argv, char **envp, int *fd)
+static int child_process(char **argv, char **envp, int *fd)
 {
-	pid_t	child;
-	int		infile;
+	pid_t child;
+	int infile;
 
 	child = fork();
+	if (child == -1)
+		return -1;
 	if (child == 0)
 	{
 		infile = open(argv[1], O_RDONLY);
@@ -37,10 +39,10 @@ static int	child_process(char **argv, char **envp, int *fd)
 	return (0);
 }
 
-int	main(int argc, char **argv, char **envp)
+int main(int argc, char **argv, char **envp)
 {
-	int	outfile;
-	int	fd[2];
+	int outfile;
+	int fd[2];
 
 	if (argc != 5)
 		return (0);
