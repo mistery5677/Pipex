@@ -6,7 +6,7 @@
 /*   By: miafonso <miafonso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 16:44:34 by miafonso          #+#    #+#             */
-/*   Updated: 2024/09/06 16:26:06 by miafonso         ###   ########.fr       */
+/*   Updated: 2024/09/09 17:27:57 by miafonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,12 +85,13 @@ void	execute(char *argv, char **envp)
 	char	**new_argv;
 
 	cmd_path = find_path(argv, envp);
-	if (cmd_path == NULL)
+	new_argv = ft_split(argv, ' ');
+	if (cmd_path == NULL || new_argv == NULL)
 	{
+		free_double(new_argv);
 		free(cmd_path);
 		return ;
 	}
-	new_argv = ft_split(argv, ' ');
 	//execve(cmd_path, new_argv, envp);
 	free_double(new_argv);
 	free(cmd_path);

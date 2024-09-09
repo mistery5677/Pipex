@@ -6,7 +6,7 @@
 /*   By: miafonso <miafonso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 17:08:12 by miafonso          #+#    #+#             */
-/*   Updated: 2024/09/06 16:33:30 by miafonso         ###   ########.fr       */
+/*   Updated: 2024/09/09 17:30:48 by miafonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static void here_doc_util(char *limitter, int *fd)
 	line = get_next_line(STDIN_FILENO);
 	while (line)
 	{
-		if (ft_strncmp(line, limitter, ft_strlen(line)) == 0)
+		if (ft_strcmp(limitter, line) == 0)
 		{
 			free(line);
 			close(fd[1]);
