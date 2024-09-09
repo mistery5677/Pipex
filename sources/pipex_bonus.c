@@ -51,6 +51,7 @@ static void here_doc_util(char *limitter, int *fd)
 			exit(0);
 		}
 		ft_putstr_fd(line, fd[1]);
+		ft_putstr_fd("\n", fd[1]);
 		free(line);
 		line = get_next_line(0);
 	}
