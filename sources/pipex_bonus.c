@@ -12,92 +12,105 @@
 
 #include "pipex_bonus.h"
 
-static void child_process(char *argv, char **envp)
+static void	child_process(char *argv, char **envp)
 {
-	pid_t child;
-	int fd[2];
+	pid_t	child;
+	int		fd[2];
 
 	if (pipe(fd) == -1)
-		return;
+		return ;
 	child = fork();
 	if (child == 0)
 	{
 		close(fd[0]);
 		dup2(fd[1], STDOUT_FILENO);
 		execute(argv, envp);
+		close(fd[1]);
 	}
 	else
 	{
 		close(fd[1]);
 		dup2(fd[0], STDIN_FILENO);
 		waitpid(child, NULL, 0);
+		close(fd[0]);
 	}
 }
 
-static void here_doc(char **argv)
+static void here_doc_util(char *limitter, int *fd)
 {
-	int fd[2];
-	char *line;
-	pid_t child;
+	char	*line;
+
+	line = get_next_line(STDIN_FILENO);
+	while (line)
+	{
+		if (ft_strncmp(line, limitter, ft_strlen(line)) == 0)
+		{
+			free(line);
+			close(fd[1]);
+			exit(0);
+		}
+		ft_putstr_fd(line, fd[1]);
+		free(line);
+		line = get_next_line(0);
+	}
+	close(fd[1]);
+	exit(0);
+}
+static void	here_doc(char **argv)
+{
+	int		fd[2];
+	pid_t	child;
 
 	if (pipe(fd) == -1)
-		return;
+		return ;
 	child = fork();
 	if (child == 0)
 	{
-		line = get_next_line(STDIN_FILENO);
-		while (line)
-		{
-			if (ft_strncmp(line, argv[2], ft_strlen(line) - 1) == 0)
-			{
-				free(line);
-				exit(0);
-			}
-			ft_putstr_fd(line, fd[1]);
-			free(line);
-			line = get_next_line(0);
-		}
-		exit(0);
+		here_doc_util(argv[2], fd);
+		close(fd[0]);
 	}
 	else
 	{
 		dup2(fd[0], STDIN_FILENO);
 		close(fd[1]);
 		wait(0);
+		close(fd[0]);
 	}
 }
 
-static int open_file(char *file, int flag)
+static int	open_file(char *file, int flag)
 {
-	int fd;
+	int	fd;
 
 	fd = 0;
 	if (flag == 1)
 	{
 		fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		return fd;
+		return (fd);
 	}
 	else if (flag == 2)
 	{
 		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		return fd;
+		return (fd);
 	}
 	else
 	{
 		fd = open(file, O_RDONLY, 0777);
-		return fd;
+		return (fd);
 	}
 }
 
-int main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
-	int infile;
-	int outfile;
-	int i;
+	int	infile;
+	int	outfile;
+	int	i;
 
 	i = 2;
+	infile = -1;
+	outfile = -1;
 	if (argc < 5)
-		return 0;
+		return (0);
 	if (ft_strncmp(argv[1], "here_doc", 9) == 0)
 	{
 		i = 3;
@@ -115,4 +128,8 @@ int main(int argc, char **argv, char **envp)
 	while (i < argc - 2)
 		child_process(argv[i++], envp);
 	execute(argv[argc - 2], envp);
+	if (outfile != -1)
+		close(outfile);
+	if (infile != -1)
+		close(infile);
 }

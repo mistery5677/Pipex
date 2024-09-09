@@ -12,9 +12,9 @@
 
 #include "pipex.h"
 
-void free_double(char **str)
+void	free_double(char **str)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (str[i])
@@ -25,9 +25,9 @@ void free_double(char **str)
 	free(str);
 }
 
-char *get_cmd_path(char **envp)
+char	*get_cmd_path(char **envp)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (envp[i] != NULL)
@@ -39,9 +39,9 @@ char *get_cmd_path(char **envp)
 	return (NULL);
 }
 
-static char *find_path_util(char *full_path, char **split_cmd, char **dir)
+static char	*find_path_util(char *full_path, char **split_cmd, char **dir)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (dir[i] != NULL)
@@ -62,12 +62,12 @@ static char *find_path_util(char *full_path, char **split_cmd, char **dir)
 	return (NULL);
 }
 
-char *find_path(char *cmd, char **envp)
+char	*find_path(char *cmd, char **envp)
 {
-	char **dir;
-	char **split_cmd;
-	char *full_path;
-	char *path_envp;
+	char	**dir;
+	char	**split_cmd;
+	char	*full_path;
+	char	*path_envp;
 
 	path_envp = get_cmd_path(envp);
 	if (path_envp == NULL)
@@ -79,10 +79,10 @@ char *find_path(char *cmd, char **envp)
 	return (full_path);
 }
 
-void execute(char *argv, char **envp)
+void	execute(char *argv, char **envp)
 {
-	char *cmd_path;
-	char **new_argv;
+	char	*cmd_path;
+	char	**new_argv;
 
 	cmd_path = find_path(argv, envp);
 	new_argv = ft_split(argv, ' ');
