@@ -6,7 +6,7 @@
 /*   By: miafonso <miafonso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 17:08:12 by miafonso          #+#    #+#             */
-/*   Updated: 2024/09/09 17:30:48 by miafonso         ###   ########.fr       */
+/*   Updated: 2024/09/09 17:49:38 by miafonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ static void	child_process(char *argv, char **envp)
 	{
 		close(fd[1]);
 		dup2(fd[0], STDIN_FILENO);
-		waitpid(child, NULL, 0);
 		close(fd[0]);
+		waitpid(child, NULL, 0);
 	}
 }
 
@@ -47,12 +47,14 @@ static void here_doc_util(char *limitter, int *fd)
 		{
 			free(line);
 			close(fd[1]);
+			close(fd[0]);
 			exit(0);
 		}
 		ft_putstr_fd(line, fd[1]);
 		free(line);
 		line = get_next_line(0);
 	}
+	close(fd[0]);
 	close(fd[1]);
 	exit(0);
 }
@@ -65,10 +67,7 @@ static void	here_doc(char **argv)
 		return ;
 	child = fork();
 	if (child == 0)
-	{
 		here_doc_util(argv[2], fd);
-		close(fd[0]);
-	}
 	else
 	{
 		dup2(fd[0], STDIN_FILENO);
@@ -111,7 +110,7 @@ int	main(int argc, char **argv, char **envp)
 	outfile = -1;
 	if (argc < 5)
 		return (0);
-	if (ft_strncmp(argv[1], "here_doc", 9) == 0)
+	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
 	{
 		i = 3;
 		outfile = open_file(argv[argc - 1], 1);
