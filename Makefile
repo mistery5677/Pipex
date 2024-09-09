@@ -11,7 +11,7 @@ SOURCES			=	$(addprefix $(SOURCES_DIR)/, $(SOURCES_FILES))
 
 OBJECTS			= 	$(SOURCES:.c=.o)
 
-NAME			=	pipex_bonus
+NAME			=	pipex
 
 BONUS_SOURCES_F = pipex_bonus.c pipex_utils_bonus.c
 

@@ -6,7 +6,7 @@
 /*   By: miafonso <miafonso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 17:08:12 by miafonso          #+#    #+#             */
-/*   Updated: 2024/09/09 17:49:38 by miafonso         ###   ########.fr       */
+/*   Updated: 2024/09/09 18:11:12 by miafonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,8 @@ static void	here_doc(char **argv)
 	else
 	{
 		dup2(fd[0], STDIN_FILENO);
-		close(fd[1]);
 		wait(0);
+		close(fd[1]);
 		close(fd[0]);
 	}
 }
@@ -110,7 +110,7 @@ int	main(int argc, char **argv, char **envp)
 	outfile = -1;
 	if (argc < 5)
 		return (0);
-	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
+	if (ft_strncmp(argv[1], "here_doc", 9) == 0)
 	{
 		i = 3;
 		outfile = open_file(argv[argc - 1], 1);
