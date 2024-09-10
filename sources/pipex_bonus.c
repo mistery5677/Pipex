@@ -87,18 +87,19 @@ static int	open_file(char *file, int flag)
 	if (flag == 1)
 	{
 		fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		return (fd);
+		dup2(fd, STDOUT_FILENO);
 	}
 	else if (flag == 2)
 	{
 		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		return (fd);
+		dup2(fd, STDOUT_FILENO);
 	}
 	else
 	{
-		fd = open(file, O_RDONLY, 0777);
-		return (fd);
+		fd = open(file, O_RDONLY, 0644);
+		dup2(fd, STDIN_FILENO);
 	}
+	return (fd);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -116,15 +117,12 @@ int	main(int argc, char **argv, char **envp)
 	{
 		i = 3;
 		outfile = open_file(argv[argc - 1], 1);
-		dup2(outfile, STDOUT_FILENO);
 		here_doc(argv);
 	}
 	else
 	{
 		infile = open_file(argv[1], 3);
 		outfile = open_file(argv[argc - 1], 2);
-		dup2(infile, STDIN_FILENO);
-		dup2(outfile, STDOUT_FILENO);
 	}
 	while (i < argc - 2)
 		child_process(argv[i++], envp);
