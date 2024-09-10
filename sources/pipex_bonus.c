@@ -36,7 +36,7 @@ static void	child_process(char *argv, char **envp)
 	}
 }
 
-static void here_doc_util(char *limitter, int *fd)
+static void	here_doc_util(char *limitter, int *fd)
 {
 	char	*line;
 
@@ -59,6 +59,7 @@ static void here_doc_util(char *limitter, int *fd)
 	close(fd[1]);
 	exit(0);
 }
+
 static void	here_doc(char **argv)
 {
 	int		fd[2];
