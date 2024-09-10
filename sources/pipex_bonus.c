@@ -109,8 +109,7 @@ int	main(int argc, char **argv, char **envp)
 	int	i;
 
 	i = 2;
-	infile = -1;
-	outfile = -1;
+	infile = 0;
 	if (argc < 5)
 		return (0);
 	if (ft_strncmp(argv[1], "here_doc", 9) == 0)
@@ -127,8 +126,6 @@ int	main(int argc, char **argv, char **envp)
 	while (i < argc - 2)
 		child_process(argv[i++], envp);
 	execute(argv[argc - 2], envp);
-	if (outfile != -1)
-		close(outfile);
-	if (infile != -1)
-		close(infile);
+	close(outfile);
+	close(infile);
 }
