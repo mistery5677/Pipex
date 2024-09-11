@@ -19,5 +19,8 @@ char	*find_path(char *cmd, char **envp);
 char	*get_cmd_path(char **envp);
 void	free_double(char **str);
 void	execute(char *argv, char **envp);
+int     print_err(int flag);
+int     child_err(int *fd);
+int     check_arg(int argc, char **argv);
 
 #endif

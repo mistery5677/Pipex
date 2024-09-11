@@ -36,20 +36,13 @@ static void	child_process(char *argv, char **envp)
 	}
 }
 
-static void	here_doc_util(char *limitter, int *fd)
+static void	here_doc_util(char *limitter, int *fd, int outfile)
 {
 	char	*line;
 
 	line = get_next_line(STDIN_FILENO);
-	while (line)
+	while (line && ft_strcmp(limitter, line) != 0)
 	{
-		if (ft_strcmp(limitter, line) == 0)
-		{
-			free(line);
-			close(fd[1]);
-			close(fd[0]);
-			exit(0);
-		}
 		ft_putstr_fd(line, fd[1]);
 		ft_putstr_fd("\n", fd[1]);
 		free(line);
@@ -57,19 +50,26 @@ static void	here_doc_util(char *limitter, int *fd)
 	}
 	close(fd[0]);
 	close(fd[1]);
+	close(outfile);
 	exit(0);
 }
 
-static void	here_doc(char **argv)
+static void	here_doc(int argc, char **argv, int outfile)
 {
 	int		fd[2];
 	pid_t	child;
 
+	if (argc != 6)
+	{
+		ft_putstr_fd("Error - Wrong number of arguments\n", 1);
+		close(outfile);
+		exit(0);
+	}
 	if (pipe(fd) == -1)
 		return ;
 	child = fork();
 	if (child == 0)
-		here_doc_util(argv[2], fd);
+		here_doc_util(argv[2], fd, outfile);
 	else
 	{
 		dup2(fd[0], STDIN_FILENO);
@@ -111,15 +111,17 @@ int	main(int argc, char **argv, char **envp)
 	i = 2;
 	infile = 0;
 	if (argc < 5)
-		return (0);
+		return print_err(1);
 	if (ft_strncmp(argv[1], "here_doc", 9) == 0)
 	{
 		i = 3;
 		outfile = open_file(argv[argc - 1], 1);
-		here_doc(argv);
+		here_doc(argc, argv, outfile);
+		close(outfile);
 	}
 	else
 	{
+		check_arg(argc, argv);
 		infile = open_file(argv[1], 3);
 		outfile = open_file(argv[argc - 1], 2);
 	}

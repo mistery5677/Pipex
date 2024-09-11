@@ -90,9 +90,10 @@ void	execute(char *argv, char **envp)
 	{
 		free_double(new_argv);
 		free(cmd_path);
+		print_err(4);
 		return ;
 	}
-	execve(cmd_path, new_argv, envp);
+	//execve(cmd_path, new_argv, envp);
 	free_double(new_argv);
 	free(cmd_path);
 }

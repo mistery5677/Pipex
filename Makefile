@@ -1,7 +1,7 @@
 LIBFT_PATH		=	./libraries/libft
 LIBFT			=	$(LIBFT_PATH)/libft.a
 
-SOURCES_FILES		=	pipex.c pipex_utils.c
+SOURCES_FILES		=	pipex.c pipex_utils.c error_handle.c
 
 SOURCES_DIR		=	sources
 
@@ -13,7 +13,7 @@ OBJECTS			= 	$(SOURCES:.c=.o)
 
 NAME			=	pipex
 
-BONUS_SOURCES_F = pipex_bonus.c pipex_utils_bonus.c
+BONUS_SOURCES_F = pipex_bonus.c pipex_utils_bonus.c error_handle.c
 
 BONUS_HEADER	=	$(SOURCES_DIR)/pipex_bonus.h
 

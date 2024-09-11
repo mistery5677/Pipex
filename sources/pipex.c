@@ -22,7 +22,7 @@ static int	child_process(char **argv, char **envp, int *fd)
 		return (-1);
 	if (child == 0)
 	{
-		infile = open(argv[1], O_RDONLY);
+		infile = open(argv[1], O_RDONLY, 0644);
 		if (infile == -1)
 			return (-1);
 		dup2(fd[1], STDOUT_FILENO);
@@ -44,19 +44,15 @@ int	main(int argc, char **argv, char **envp)
 	int	outfile;
 	int	fd[2];
 
-	if (argc != 5)
-		return (0);
+	if (argc != 5 || check_arg(argc, argv) == -1)
+		return print_err(1);
 	if (pipe(fd) == -1)
-		return (-1);
+		return print_err(2);
 	if (child_process(argv, envp, fd) == -1)
-	{
-		close(fd[0]);
-		close(fd[1]);
-		return (0);
-	}
+		return child_err(fd);
 	outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (outfile == -1)
-		return (0);
+		return print_err(3);
 	dup2(outfile, STDOUT_FILENO);
 	close(fd[0]);
 	close(fd[1]);
