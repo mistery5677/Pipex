@@ -6,7 +6,7 @@
 /*   By: miafonso <miafonso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 17:08:31 by miafonso          #+#    #+#             */
-/*   Updated: 2024/09/06 15:16:22 by miafonso         ###   ########.fr       */
+/*   Updated: 2024/09/11 14:52:42 by miafonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,8 @@ char	*find_path(char *cmd, char **envp);
 char	*get_cmd_path(char **envp);
 void	free_double(char **str);
 void	execute(char *argv, char **envp);
-int     print_err(int flag);
-int     child_err(int *fd);
-int     check_arg(int argc, char **argv);
-
+int		print_err(int flag);
+int		child_err(int *fd);
+int		check_arg(int argc, char **argv);
 
 #endif

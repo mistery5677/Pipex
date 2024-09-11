@@ -6,7 +6,7 @@
 /*   By: miafonso <miafonso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 16:44:34 by miafonso          #+#    #+#             */
-/*   Updated: 2024/09/09 16:48:37 by miafonso         ###   ########.fr       */
+/*   Updated: 2024/09/11 14:39:09 by miafonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ void	execute(char *argv, char **envp)
 		print_err(4);
 		return ;
 	}
-	//execve(cmd_path, new_argv, envp);
+	execve(cmd_path, new_argv, envp);
 	free_double(new_argv);
 	free(cmd_path);
 }

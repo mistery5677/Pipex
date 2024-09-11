@@ -6,7 +6,7 @@
 /*   By: miafonso <miafonso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 15:27:04 by miafonso          #+#    #+#             */
-/*   Updated: 2024/09/09 16:45:54 by miafonso         ###   ########.fr       */
+/*   Updated: 2024/09/11 14:42:57 by miafonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,5 +84,5 @@ size_t				ft_print_hex(unsigned int num, int format);
 char				*get_next_line(int fd);
 int					clean_buffer(char *str);
 char				*ft_strjoin_gnl(char *s1, char *s2);
-int 				ft_strcmp(char *s1, char *s2);
+int					ft_strcmp(char *s1, char *s2);
 #endif
