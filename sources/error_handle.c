@@ -6,7 +6,7 @@
 /*   By: miafonso <miafonso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 14:50:46 by miafonso          #+#    #+#             */
-/*   Updated: 2024/09/11 14:57:04 by miafonso         ###   ########.fr       */
+/*   Updated: 2024/09/11 15:01:45 by miafonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ int	check_arg(int argc, char **argv)
 	int	i;
 
 	i = 0;
+	if (ft_strncmp(argv[1], "here_doc", 9) == 0)
+		return (0);
 	if (access(argv[1], F_OK) != 0)
 	{
 		ft_putstr_fd("Error - Infile doesn't exist\n", 2);

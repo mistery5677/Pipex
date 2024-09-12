@@ -6,7 +6,7 @@
 /*   By: miafonso <miafonso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 17:08:12 by miafonso          #+#    #+#             */
-/*   Updated: 2024/09/11 14:53:06 by miafonso         ###   ########.fr       */
+/*   Updated: 2024/09/11 15:10:04 by miafonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ int	main(int argc, char **argv, char **envp)
 
 	i = 2;
 	infile = 0;
-	if (argc < 5)
+	if (argc < 5 || check_arg(argc, argv) == -1)
 		return (print_err(1));
 	if (ft_strncmp(argv[1], "here_doc", 9) == 0)
 	{
@@ -121,7 +121,6 @@ int	main(int argc, char **argv, char **envp)
 	}
 	else
 	{
-		check_arg(argc, argv);
 		infile = open_file(argv[1], 3);
 		outfile = open_file(argv[argc - 1], 2);
 	}

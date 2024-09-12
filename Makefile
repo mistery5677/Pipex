@@ -21,7 +21,7 @@ BONUS_SOURCES = $(addprefix $(SOURCES_DIR)/, $(BONUS_SOURCES_F))
 
 BONUS_OBJ = $(BONUS_SOURCES:.c=.o)
 
-BONUS_NAME = pipex
+BONUS_NAME = pipex_bonus
 
 CC			=	cc
 RM			=	rm -rf
@@ -45,7 +45,7 @@ clean:
 
 fclean:			clean
 				$(MAKE) -C $(LIBFT_PATH) fclean
-				$(RM) $(NAME)
+				$(RM) $(NAME) $(BONUS_NAME)
 
 re:				fclean all
 

@@ -6,7 +6,7 @@
 /*   By: miafonso <miafonso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 17:08:12 by miafonso          #+#    #+#             */
-/*   Updated: 2024/09/11 14:52:18 by miafonso         ###   ########.fr       */
+/*   Updated: 2024/09/11 15:56:13 by miafonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ static int	child_process(char **argv, char **envp, int *fd)
 		dup2(infile, STDIN_FILENO);
 		execute(argv[2], envp);
 		close(fd[0]);
+		close(fd[1]);
 		close(infile);
 		exit(0);
 	}
